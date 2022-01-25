@@ -43,5 +43,5 @@ COPY --from=builder /home/teku/teku/build/install/teku /opt/
 RUN useradd -m -u 1000 -s /bin/bash teku
 USER teku
 WORKDIR /opt
-#ENTRYPOINT /opt/bin/teku
+ENTRYPOINT /bin/teku
 
