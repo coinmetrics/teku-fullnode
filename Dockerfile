@@ -19,9 +19,16 @@ RUN useradd -m -u 1000 -s /bin/bash teku
 USER teku
 
 ARG VERSION
+RUN if test ${#VERSION} -ge 40 ; \
+    then \
+      echo Checking out commit $VERSION && \
+      git clone https://github.com/ConsenSys/teku.git /home/teku/teku && \
+      cd /home/teku/teku && git reset --hard $VERSION ; \
+    else \
+      echo Checking out branch $VERSION && \
+      git clone --depth 1 -b ${VERSION} https://github.com/ConsenSys/teku.git /home/teku/teku ; \
+    fi
 
-RUN set -ex; \
-        git clone --depth 1 -b ${VERSION} https://github.com/ConsenSys/teku.git /home/teku/teku
 
 RUN set -ex; \
 	cd /home/teku/teku; \
@@ -43,5 +50,5 @@ COPY --from=builder /home/teku/teku/build/install/teku /opt/
 RUN useradd -m -u 1000 -s /bin/bash teku
 USER teku
 WORKDIR /opt
-#ENTRYPOINT /opt/bin/teku
+ENTRYPOINT [ "./bin/teku" ]
 
